@@ -1,0 +1,42 @@
+CREATE TABLE Loans (
+    Loan_ID VARCHAR(255),
+    Gender VARCHAR(50),
+    Married VARCHAR(50),
+    Dependents VARCHAR(50),
+    Education VARCHAR(50),
+    Self_Employed VARCHAR(50),
+    ApplicantIncome INTEGER,
+    CoapplicantIncome INTEGER,
+    LoanAmount NUMERIC,
+    Loan_Amount_Term NUMERIC,
+    Credit_History NUMERIC,
+    Property_Area VARCHAR(100)
+);
+
+COPY Loans
+FROM '/Users/Shared/Public_Doc4SQL/test.csv'
+DELIMITER ','
+CSV HEADER;
+
+SELECT 
+    Gender,
+    AVG(ApplicantIncome) AS Average_Income,
+    AVG(LoanAmount) AS Average_Loan_Amount
+FROM 
+    Loans
+GROUP BY 
+    Gender;
+
+SELECT 
+    Gender,
+    COUNT(*) AS Total_Count,
+    SUM(CASE WHEN Education = 'Graduate' THEN 1 ELSE 0 END) AS Graduate_Count,
+    SUM(CASE WHEN Education = 'Not Graduate' THEN 1 ELSE 0 END) AS Non_Graduate_Count,
+    ROUND(100.0 * SUM(CASE WHEN Education = 'Graduate' THEN 1 ELSE 0 END) / COUNT(*), 2) AS Percentage_Graduates,
+    ROUND(100.0 * SUM(CASE WHEN Education = 'Not Graduate' THEN 1 ELSE 0 END) / COUNT(*), 2) AS Percentage_Non_Graduates
+FROM 
+    Loans
+WHERE 
+    Gender IS NOT NULL
+GROUP BY 
+    Gender;
